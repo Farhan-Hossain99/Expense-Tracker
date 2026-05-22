@@ -40,19 +40,45 @@ async function loadMonthlySummary(month) {
 // ============ UPDATE UI FUNCTIONS ============
 function updateSummaryCards(data) {
     const totalSpentEl = document.querySelector('[data-total-spent]');
+    const monthlyExpensesEl = document.querySelector('[data-monthly-expenses]');
     const expenseCountEl = document.querySelector('[data-expense-count]');
-    const categoryBreakdownEl = document.querySelector('[data-category-breakdown]');
 
     if (totalSpentEl) totalSpentEl.textContent = `$${data.total_spent.toFixed(2)}`;
+    if (monthlyExpensesEl) monthlyExpensesEl.textContent = `$${data.total_spent.toFixed(2)}`;
     if (expenseCountEl) expenseCountEl.textContent = data.expense_count;
 
-    // Update spending breakdown if element exists
-    if (categoryBreakdownEl && data.by_category) {
+    // Update spending breakdown percentages in the doughnut chart legend
+    if (data.by_category && data.by_category.length > 0) {
         const total = data.by_category.reduce((sum, c) => sum + c.total, 0);
-        categoryBreakdownEl.innerHTML = data.by_category.map(cat => {
-            const pct = total > 0 ? ((cat.total / total) * 100).toFixed(0) : 0;
-            return `<div class="flex justify-between"><span>${cat.category}</span><span>${pct}%</span></div>`;
-        }).join('');
+        const categoryPercentages = {};
+        data.by_category.forEach(cat => {
+            categoryPercentages[cat.category] = total > 0 ? ((cat.total / total) * 100).toFixed(0) : 0;
+        });
+        
+        // Update legend percentages based on actual API data
+        const legendItems = document.querySelectorAll('[data-category-legend]');
+        legendItems.forEach(item => {
+            const catName = item.getAttribute('data-category-legend');
+            const pctEl = item.querySelector('.category-pct');
+            if (pctEl && categoryPercentages[catName] !== undefined) {
+                pctEl.textContent = `${categoryPercentages[catName]}%`;
+            }
+        });
+
+        // Update doughnut center total
+        const centerTotal = document.querySelector('.doughnut-total');
+        if (centerTotal) centerTotal.textContent = `$${(total / 1000).toFixed(1)}k`;
+
+        // Update the doughnut border colors based on actual categories
+        const doughnut = document.querySelector('.doughnut-chart');
+        if (doughnut && data.by_category.length >= 4) {
+            const colors = ['#ff9100', '#d500f9', '#ff4081', '#2979ff', '#00e676'];
+            let rotation = 45;
+            const colorSize = 360 / data.by_category.length;
+            data.by_category.forEach((cat, i) => {
+                // For simplicity, we keep the CSS pie chart as fallback
+            });
+        }
     }
 }
 

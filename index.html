@@ -7,7 +7,7 @@
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="script.js"></script>
 <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
@@ -155,7 +155,7 @@
 </a>
 </div>
 <div class="mt-auto flex flex-col gap-2">
-<button class="w-full bg-primary text-on-primary font-label-lg text-label-lg py-3 rounded-xl hover:scale-[1.02] shadow-lg shadow-primary/30 transition-all duration-200 active:scale-95 flex justify-center items-center gap-2 mb-6">
+<button data-add-expense-btn class="w-full bg-primary text-on-primary font-label-lg text-label-lg py-3 rounded-xl hover:scale-[1.02] shadow-lg shadow-primary/30 transition-all duration-200 active:scale-95 flex justify-center items-center gap-2 mb-6">
 <span class="material-symbols-outlined text-sm">add</span>
                 Add Expense
             </button>
@@ -199,7 +199,7 @@
 <h2 class="font-display-md text-display-md text-on-background">Overview</h2>
 <p class="font-body-md text-body-md text-on-surface-variant">Here's what's happening with your finances today.</p>
 </div>
-<button class="hidden md:flex bg-primary text-on-primary font-label-lg text-label-lg px-6 py-3 rounded-xl hover:scale-[1.02] shadow-lg shadow-primary/30 transition-all duration-200 active:scale-95 items-center gap-2">
+<button data-add-expense-btn class="hidden md:flex bg-primary text-on-primary font-label-lg text-label-lg px-6 py-3 rounded-xl hover:scale-[1.02] shadow-lg shadow-primary/30 transition-all duration-200 active:scale-95 items-center gap-2">
 <span class="material-symbols-outlined">add</span>
                     Add Expense
                 </button>
@@ -211,7 +211,7 @@
 <div class="absolute -right-10 -top-10 w-32 h-32 bg-primary/5 rounded-full blur-2xl"></div>
 <div>
 <p class="font-label-lg text-label-lg text-on-surface-variant mb-1">Total Balance</p>
-<h3 class="font-display-lg text-display-lg text-on-background">$24,562.00</h3>
+<h3 class="font-display-lg text-display-lg text-on-background" data-total-spent>$24,562.00</h3>
 </div>
 <div class="mt-6 flex items-center gap-2 text-secondary font-label-sm text-label-sm bg-secondary-container/30 px-3 py-1.5 rounded-full w-fit">
 <span class="material-symbols-outlined text-[16px]">trending_up</span>
@@ -347,7 +347,7 @@
 <h3 class="font-title-lg text-title-lg text-on-background">Recent Transactions</h3>
 <button class="font-label-lg text-label-lg text-primary hover:text-primary-container transition-colors">View All</button>
 </div>
-<div class="flex flex-col">
+<div class="flex flex-col" data-transactions-list>
 <!-- Transaction Row -->
 <div class="flex items-center justify-between py-4 border-b border-surface-container-highest last:border-0 hover:bg-surface-container-low/50 px-2 rounded-lg transition-colors cursor-pointer">
 <div class="flex items-center gap-4">
@@ -417,5 +417,52 @@
 </div>
 </div>
 </main>
+</div>
+<!-- Add Expense Modal -->
+<div data-add-expense-modal class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-surface-container-lowest rounded-2xl p-6 w-full max-w-md shadow-2xl">
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="font-headline-lg text-headline-lg text-on-background">Add Expense</h3>
+            <button data-close-modal class="p-2 rounded-full hover:bg-surface-container transition-colors">
+                <span class="material-symbols-outlined text-on-surface-variant">close</span>
+            </button>
+        </div>
+        <form data-expense-form class="flex flex-col gap-4">
+            <div>
+                <label class="font-label-lg text-label-lg text-on-surface-variant mb-1 block">Amount ($)</label>
+                <input type="number" name="amount" step="0.01" min="0.01" required
+                    class="w-full px-4 py-3 rounded-xl bg-surface-container border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary/20 text-body-md text-on-background outline-none transition-all" placeholder="0.00">
+            </div>
+            <div>
+                <label class="font-label-lg text-label-lg text-on-surface-variant mb-1 block">Category</label>
+                <select name="category" data-category-select required
+                    class="w-full px-4 py-3 rounded-xl bg-surface-container border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary/20 text-body-md text-on-background outline-none transition-all">
+                    <option value="">Select category</option>
+                    <option value="Food">Food & Dining</option>
+                    <option value="Transport">Transport</option>
+                    <option value="Shopping">Shopping</option>
+                    <option value="Bills">Bills</option>
+                    <option value="Entertainment">Entertainment</option>
+                    <option value="Health">Health</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            <div>
+                <label class="font-label-lg text-label-lg text-on-surface-variant mb-1 block">Description</label>
+                <input type="text" name="description"
+                    class="w-full px-4 py-3 rounded-xl bg-surface-container border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary/20 text-body-md text-on-background outline-none transition-all" placeholder="What was this expense for?">
+            </div>
+            <div>
+                <label class="font-label-lg text-label-lg text-on-surface-variant mb-1 block">Date</label>
+                <input type="date" name="date" required
+                    class="w-full px-4 py-3 rounded-xl bg-surface-container border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary/20 text-body-md text-on-background outline-none transition-all">
+            </div>
+            <button type="submit" data-submit-expense
+                class="w-full bg-primary text-on-primary font-label-lg text-label-lg py-3 rounded-xl hover:scale-[1.02] shadow-lg shadow-primary/30 transition-all duration-200 active:scale-95 flex justify-center items-center gap-2 mt-2">
+                <span class="material-symbols-outlined text-sm">add</span>
+                Add Expense
+            </button>
+        </form>
+    </div>
 </div>
 </body></html>

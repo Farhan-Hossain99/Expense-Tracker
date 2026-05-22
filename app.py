@@ -7,9 +7,8 @@ from datetime import datetime, timedelta
 import sqlite3
 import os
 
-# Database in project root (parent of backend/)
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # backend/
-PROJECT_DIR = os.path.dirname(BASE_DIR)  # parent = project root
+# Project root = directory containing app.py (no subdirectory)
+PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 app = Flask(__name__, static_folder=PROJECT_DIR, static_url_path='')
 CORS(app)

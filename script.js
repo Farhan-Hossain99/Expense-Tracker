@@ -18,15 +18,17 @@ async function fetchAPI(endpoint, options = {}) {
 
 // ============ DATA FETCHING ============
 async function loadDashboardData() {
-    const [summary, expenses, categories] = await Promise.all([
+    const [summary, expenses, categories, savingsGoals] = await Promise.all([
         fetchAPI('/analytics/summary'),
         fetchAPI('/expenses?limit=10'),
-        fetchAPI('/categories')
+        fetchAPI('/categories'),
+        fetchAPI('/savings-goals')
     ]);
 
     if (summary) updateSummaryCards(summary);
     if (expenses) updateTransactionsList(expenses.expenses);
     if (categories) updateCategoryData(categories.categories);
+    if (savingsGoals) updateSavingsGoals(savingsGoals.savings_goals);
 }
 
 async function loadExpenses(limit = 20) {
@@ -133,6 +135,31 @@ function openAddExpenseModal() {
 }
 
 function closeAddExpenseModal() {
+
+function updateSavingsGoals(goals) {
+    const container = document.getElementById('savings-goals-container');
+    if (!container) return;
+    
+    container.innerHTML = goals.map(goal => {
+        const progress = ((goal.current_amount / goal.target_amount) * 100).toFixed(1);
+        return \`
+            <div class="savings-goal-card">
+                <div class="goal-header">
+                    <h4>\${goal.name}</h4>
+                    <span class="goal-deadline">\${goal.deadline || 'No deadline'}</span>
+                </div>
+                <div class="goal-progress">
+                    <div class="progress-bar" style="width: \${Math.min(progress, 100)}%"></div>
+                </div>
+                <div class="goal-amounts">
+                    <span>$\${goal.current_amount.toFixed(2)}</span>
+                    <span>of $\${goal.target_amount.toFixed(2)}</span>
+                </div>
+            </div>
+        \`;
+    }).join('');
+}
+
     const modal = document.querySelector('[data-add-expense-modal]');
     if (modal) modal.classList.add('hidden');
     resetExpenseForm();

@@ -63,6 +63,31 @@ def init_db():
         'INSERT OR IGNORE INTO categories (name, icon, color) VALUES (?, ?, ?)',
         default_categories
     )
+
+    
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS savings_goals (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            target_amount REAL NOT NULL,
+            current_amount REAL DEFAULT 0,
+            deadline TEXT,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+    
+    # Insert sample savings goals if table is empty
+    cursor.execute('SELECT COUNT(*) FROM savings_goals')
+    if cursor.fetchone()[0] == 0:
+        sample_goals = [
+            ('Emergency Fund', 5000, 1500, '2026-12-31'),
+            ('Vacation', 3000, 800, '2026-08-01'),
+            ('New Laptop', 2000, 1200, '2026-06-01')
+        ]
+        cursor.executemany(
+            'INSERT INTO savings_goals (name, target_amount, current_amount, deadline) VALUES (?, ?, ?, ?)',
+            sample_goals
+        )
     
     conn.commit()
     conn.close()
@@ -363,6 +388,42 @@ def get_categories():
     conn.close()
     
     return jsonify({'categories': categories})
+
+
+# ============ SAVINGS GOALS ENDPOINTS ============
+
+@app.route('/api/savings-goals', methods=['GET'])
+def get_savings_goals():
+    """Get all savings goals."""
+    conn = get_db()
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM savings_goals ORDER BY id')
+    goals = [dict(row) for row in cursor.fetchall()]
+    conn.close()
+    return jsonify({'savings_goals': goals})
+
+
+@app.route('/api/savings-goals/<int:goal_id>', methods=['PUT'])
+def update_savings_goal(goal_id):
+    """Update a savings goal (add contribution)."""
+    data = request.get_json()
+    
+    if 'current_amount' in data:
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute(
+            'UPDATE savings_goals SET current_amount = ? WHERE id = ?',
+            (data['current_amount'], goal_id)
+        )
+        conn.commit()
+        
+        cursor.execute('SELECT * FROM savings_goals WHERE id = ?', (goal_id,))
+        goal = dict(cursor.fetchone())
+        conn.close()
+        return jsonify({'savings_goal': goal})
+    
+    return jsonify({'error': 'Invalid update'}), 400
+
 
 
 # ============ FRONTEND ROUTES ============

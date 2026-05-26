@@ -1,122 +1,21 @@
 <!DOCTYPE html>
-
 <html class="light" lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>FinPulse - Dashboard</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 <script src="script.js"></script>
-<script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "on-secondary-container": "#00714d",
-                        "secondary": "#006c49",
-                        "tertiary-fixed": "#ffd9e4",
-                        "on-surface-variant": "#424754",
-                        "surface-container-low": "#f0f3ff",
-                        "surface-container-lowest": "#ffffff",
-                        "background": "#f9f9ff",
-                        "tertiary-fixed-dim": "#ffb0cd",
-                        "on-secondary": "#ffffff",
-                        "primary-fixed": "#d8e2ff",
-                        "surface": "#f9f9ff",
-                        "tertiary": "#b10e6b",
-                        "secondary-fixed": "#6ffbbe",
-                        "surface-container-highest": "#d8e3fb",
-                        "on-background": "#111c2d",
-                        "primary": "#0058be",
-                        "secondary-fixed-dim": "#4edea3",
-                        "on-error-container": "#93000a",
-                        "surface-variant": "#d8e3fb",
-                        "on-secondary-fixed": "#002113",
-                        "inverse-on-surface": "#ecf1ff",
-                        "secondary-container": "#6cf8bb",
-                        "surface-tint": "#005ac2",
-                        "primary-container": "#2170e4",
-                        "surface-dim": "#cfdaf2",
-                        "on-secondary-fixed-variant": "#005236",
-                        "surface-bright": "#f9f9ff",
-                        "on-tertiary-fixed": "#3e0022",
-                        "on-tertiary-fixed-variant": "#8c0053",
-                        "inverse-primary": "#adc6ff",
-                        "on-primary": "#ffffff",
-                        "surface-container-high": "#dee8ff",
-                        "on-primary-fixed": "#001a42",
-                        "on-tertiary-container": "#fffbff",
-                        "outline-variant": "#c2c6d6",
-                        "surface-container": "#e7eeff",
-                        "on-tertiary": "#ffffff",
-                        "on-error": "#ffffff",
-                        "primary-fixed-dim": "#adc6ff",
-                        "error-container": "#ffdad6",
-                        "inverse-surface": "#263143",
-                        "tertiary-container": "#d23284",
-                        "error": "#ba1a1a",
-                        "on-primary-fixed-variant": "#004395",
-                        "on-primary-container": "#fefcff",
-                        "outline": "#727785",
-                        "on-surface": "#111c2d"
-                    },
-                    borderRadius: {
-                        "DEFAULT": "0.25rem",
-                        "lg": "0.5rem",
-                        "xl": "0.75rem",
-                        "2xl": "1rem",
-                        "full": "9999px"
-                    },
-                    spacing: {
-                        "margin-desktop": "40px",
-                        "gutter": "24px",
-                        "card-padding": "24px",
-                        "unit": "8px",
-                        "container-max-width": "1440px"
-                    },
-                    fontFamily: {
-                        "display-lg": ["Plus Jakarta Sans"],
-                        "body-lg": ["Plus Jakarta Sans"],
-                        "display-md": ["Plus Jakarta Sans"],
-                        "headline-md": ["Plus Jakarta Sans"],
-                        "headline-lg": ["Plus Jakarta Sans"],
-                        "title-lg": ["Plus Jakarta Sans"],
-                        "label-lg": ["Plus Jakarta Sans"],
-                        "body-md": ["Plus Jakarta Sans"],
-                        "label-sm": ["Plus Jakarta Sans"]
-                    },
-                    fontSize: {
-                        "display-lg": ["48px", { lineHeight: "56px", letterSpacing: "-0.04em", fontWeight: "800" }],
-                        "body-lg": ["18px", { lineHeight: "28px", letterSpacing: "0", fontWeight: "400" }],
-                        "display-md": ["36px", { lineHeight: "44px", letterSpacing: "-0.03em", fontWeight: "800" }],
-                        "headline-md": ["24px", { lineHeight: "32px", letterSpacing: "-0.02em", fontWeight: "700" }],
-                        "headline-lg": ["28px", { lineHeight: "36px", letterSpacing: "-0.02em", fontWeight: "700" }],
-                        "title-lg": ["20px", { lineHeight: "28px", letterSpacing: "-0.01em", fontWeight: "600" }],
-                        "label-lg": ["14px", { lineHeight: "20px", letterSpacing: "0.01em", fontWeight: "600" }],
-                        "body-md": ["16px", { lineHeight: "24px", letterSpacing: "0", fontWeight: "400" }],
-                        "label-sm": ["12px", { lineHeight: "16px", letterSpacing: "0.02em", fontWeight: "600" }]
-                    }
-                }
-            }
-        }
-    </script>
 <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f9f9ff; color: #111c2d; }
-        .glass-card {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.04);
-        }
+        .glass-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.4); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.04); }
         .vibrant-mint { color: #00e676; }
         .vibrant-pink { color: #ff4081; }
         .vibrant-orange { color: #ff9100; }
         .vibrant-purple { color: #d500f9; }
         .vibrant-blue { color: #2979ff; }
-        
         .bg-vibrant-mint { background-color: #00e676; }
         .bg-vibrant-pink { background-color: #ff4081; }
         .bg-vibrant-orange { background-color: #ff9100; }
@@ -125,250 +24,155 @@
     </style>
 </head>
 <body class="flex min-h-screen bg-background text-on-background antialiased">
-<!-- SideNavBar -->
-<nav class="hidden md:flex flex-col py-margin-desktop px-gutter bg-surface/80 backdrop-blur-xl border-r border-white/20 shadow-xl shadow-black/5 fixed left-0 top-0 h-full w-[280px] z-50">
+<nav class="hidden md:flex flex-col py-10 px-6 bg-surface/80 backdrop-blur-xl border-r border-white/20 shadow-xl shadow-black/5 fixed left-0 top-0 h-full w-[280px] z-50">
 <div class="mb-10">
-<h1 class="font-display-md text-display-md font-extrabold text-primary">FinPulse</h1>
-<p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mt-1">Proactive Clarity</p>
+<h1 class="font-extrabold text-3xl text-blue-600">FinPulse</h1>
+<p class="text-xs text-gray-500 uppercase tracking-widest mt-1">Proactive Clarity</p>
 </div>
 <div class="flex flex-col gap-2 flex-grow">
-<!-- Active: Dashboard -->
-<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-primary font-bold border-r-4 border-primary bg-primary-container/10 transition-all" href="#">
-<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
-<span class="font-label-lg text-label-lg">Dashboard</span>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-blue-600 font-bold border-r-4 border-blue-600 bg-blue-100/10" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-sm">Dashboard</span>
 </a>
-<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:text-primary hover:bg-primary-container/5 transition-all" href="#">
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-500 hover:text-blue-600 hover:bg-blue-50 transition-all" href="#">
 <span class="material-symbols-outlined">receipt_long</span>
-<span class="font-label-lg text-label-lg">Transactions</span>
-</a>
-<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:text-primary hover:bg-primary-container/5 transition-all" href="#">
-<span class="material-symbols-outlined">analytics</span>
-<span class="font-label-lg text-label-lg">Analytics</span>
-</a>
-<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:text-primary hover:bg-primary-container/5 transition-all" href="#">
-<span class="material-symbols-outlined">account_balance_wallet</span>
-<span class="font-label-lg text-label-lg">Budgets</span>
-</a>
-<a class="flex items-center gap-3 px-4 py-3 rounded-xl text-on-surface-variant hover:text-primary hover:bg-primary-container/5 transition-all" href="#">
-<span class="material-symbols-outlined">settings</span>
-<span class="font-label-lg text-label-lg">Settings</span>
+<span class="text-sm">Transactions</span>
 </a>
 </div>
-<div class="mt-auto flex flex-col gap-2">
-<button data-add-expense-btn class="w-full bg-primary text-on-primary font-label-lg text-label-lg py-3 rounded-xl hover:scale-[1.02] shadow-lg shadow-primary/30 transition-all duration-200 active:scale-95 flex justify-center items-center gap-2 mb-6">
-<span class="material-symbols-outlined text-sm">add</span>
-                Add Expense
-            </button>
-<div class="h-px w-full bg-outline-variant/30 mb-4"></div>
-<a class="flex items-center gap-3 px-4 py-2 rounded-xl text-on-surface-variant hover:text-primary transition-all" href="#">
-<span class="material-symbols-outlined">help</span>
-<span class="font-label-lg text-label-lg">Help Center</span>
-</a>
-<a class="flex items-center gap-3 px-4 py-2 rounded-xl text-on-surface-variant hover:text-primary transition-all" href="#">
-<span class="material-symbols-outlined">logout</span>
-<span class="font-label-lg text-label-lg">Logout</span>
-</a>
+<div class="mt-auto">
+<button data-add-expense-btn class="w-full bg-blue-600 text-white text-sm py-3 rounded-xl hover:scale-[1.02] shadow-lg shadow-blue-600/30 transition-all flex justify-center items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-sm">add</span>Add Expense
+</button>
 </div>
 </nav>
-<!-- Main Content Wrapper -->
 <div class="flex-1 flex flex-col w-full md:pl-[280px] min-h-screen">
-<!-- TopNavBar -->
-<header class="flex justify-between items-center h-20 px-margin-desktop bg-surface/60 backdrop-blur-md border-b border-white/10 sticky top-0 z-40 w-full">
+<header class="flex justify-between items-center h-20 px-10 bg-surface/60 backdrop-blur-md border-b border-white/10 sticky top-0 z-40">
 <div class="flex items-center gap-4 w-1/3">
-<div class="relative w-full max-w-md flex items-center bg-surface-container-highest/50 rounded-full px-4 py-2 focus-within:ring-2 focus-within:ring-primary/20 transition-all border border-outline-variant/30">
-<span class="material-symbols-outlined text-outline mr-2">search</span>
-<input class="bg-transparent border-none focus:ring-0 text-body-md font-body-md text-on-surface w-full placeholder:text-outline p-0" placeholder="Search transactions..." type="text"/>
-</div>
+<input class="w-full max-w-md px-4 py-2 rounded-full bg-gray-100 border border-gray-200 text-sm" placeholder="Search transactions..." type="text"/>
 </div>
 <div class="flex items-center gap-2">
-<button class="p-2 rounded-full text-on-surface-variant hover:bg-primary-container/20 hover:text-primary transition-colors">
-<span class="material-symbols-outlined">notifications</span>
-</button>
-<button class="p-2 rounded-full text-on-surface-variant hover:bg-primary-container/20 hover:text-primary transition-colors mr-4">
-<span class="material-symbols-outlined">settings</span>
-</button>
-<div class="h-10 w-10 rounded-full overflow-hidden border-2 border-primary-container/30 cursor-pointer hover:border-primary transition-colors">
-<img alt="User profile photo" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuADCwVzY8UwH6D5o0md0er40WYMiHKoGagUYsvQ5wUzqGLDcuTsRCLHcKMJCNw7T7yrFPiEpENAqtju7GMPT8eBf1LwdhC6VgfJjse8DwclMUTBgUD6SRCkPXUvrioFy2vt69cuv7d-q6EuWmzQ58emS49JZQI_ks5kcpHlCxJ37uvpN9s_9pb0hW3UPui6pH0PI9m-gFiAHf1ZqXJ0UwnAX6w3s7Oel6BhSrcsGaefePJO_AXUyVbFr-lqgU1Es2lig8n34qS1uTM"/>
-</div>
+<div class="h-10 w-10 rounded-full bg-gray-300 border-2 border-blue-200"></div>
 </div>
 </header>
-<!-- Dashboard Canvas -->
-<main class="flex-1 p-gutter md:p-margin-desktop overflow-y-auto">
+<main class="flex-1 p-6 lg:p-10">
 <div class="flex justify-between items-end mb-8">
 <div>
-<h2 class="font-display-md text-display-md text-on-background">Overview</h2>
-<p class="font-body-md text-body-md text-on-surface-variant">Here's what's happening with your finances today.</p>
+<h2 class="font-extrabold text-3xl text-gray-800">Overview</h2>
+<p class="text-sm text-gray-500">Here's what's happening with your finances today.</p>
 </div>
-<button data-add-expense-btn class="hidden md:flex bg-primary text-on-primary font-label-lg text-label-lg px-6 py-3 rounded-xl hover:scale-[1.02] shadow-lg shadow-primary/30 transition-all duration-200 active:scale-95 items-center gap-2">
-<span class="material-symbols-outlined">add</span>
-                    Add Expense
-                </button>
-</div>
-<!-- Bento Grid Layout -->
-<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter">
-<!-- Financial Overview Cards (Top Row) -->
-<div class="md:col-span-4 glass-card rounded-2xl p-card-padding flex flex-col justify-between relative overflow-hidden">
-<div class="absolute -right-10 -top-10 w-32 h-32 bg-primary/5 rounded-full blur-2xl"></div>
-<div>
-<p class="font-label-lg text-label-lg text-on-surface-variant mb-1">Total Balance</p>
-<h3 class="font-display-lg text-display-lg text-on-background" data-total-spent>--</h3>
-</div>
-<div class="mt-6 flex items-center gap-2 text-secondary font-label-sm text-label-sm bg-secondary-container/30 px-3 py-1.5 rounded-full w-fit">
-<span class="material-symbols-outlined text-[16px]">trending_up</span>
-                        +2.4% from last month
-                    </div>
-</div>
-<div class="md:col-span-4 glass-card rounded-2xl p-card-padding flex flex-col justify-between">
-<div>
-<p class="font-label-lg text-label-lg text-on-surface-variant mb-1">Monthly Income</p>
-<h3 class="font-headline-lg text-headline-lg text-on-background" data-monthly-income>--</h3>
-</div>
-<div class="mt-6 flex items-center gap-3">
-<div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container">
-<span class="material-symbols-outlined">arrow_downward</span>
-</div>
-<div class="flex-1 bg-surface-container-highest h-2 rounded-full overflow-hidden">
-<div class="bg-vibrant-mint h-full w-[70%] rounded-full"></div>
-</div>
-</div>
-</div>
-<div class="md:col-span-4 glass-card rounded-2xl p-card-padding flex flex-col justify-between">
-<div>
-<p class="font-label-lg text-label-lg text-on-surface-variant mb-1">Monthly Expenses</p>
-<h3 class="font-headline-lg text-headline-lg text-on-background" data-monthly-expenses>--</h3>
-</div>
-<div class="mt-6 flex items-center gap-3">
-<div class="w-10 h-10 rounded-full bg-tertiary-container/20 flex items-center justify-center text-tertiary">
-<span class="material-symbols-outlined">arrow_upward</span>
-</div>
-<div class="flex-1 bg-surface-container-highest h-2 rounded-full overflow-hidden">
-<div class="bg-vibrant-pink h-full w-[45%] rounded-full"></div>
-</div>
-</div>
-</div>
-<!-- Main Middle Section -->
-<div class="md:col-span-8 glass-card rounded-2xl p-card-padding flex flex-col">
-<div class="flex justify-between items-center mb-6">
-<h3 class="font-title-lg text-title-lg text-on-background">Spending Breakdown</h3>
-<button class="p-2 rounded-full hover:bg-surface-container transition-colors">
-<span class="material-symbols-outlined text-outline">more_horiz</span>
+<button data-add-expense-btn class="hidden md:flex bg-blue-600 text-white text-sm px-6 py-3 rounded-xl hover:scale-[1.02] shadow-lg shadow-blue-600/30 transition-all items-center gap-2">
+<span class="material-symbols-outlined">add</span>Add Expense
 </button>
 </div>
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+<div class="md:col-span-4 glass-card rounded-2xl p-6">
+<p class="text-sm text-gray-500 mb-1">Total Balance</p>
+<h3 class="font-extrabold text-4xl text-gray-800" data-total-spent>--</h3>
+</div>
+<div class="md:col-span-4 glass-card rounded-2xl p-6">
+<p class="text-sm text-gray-500 mb-1">Monthly Expenses</p>
+<h3 class="font-bold text-2xl text-gray-800" data-monthly-expenses>--</h3>
+</div>
+<div class="md:col-span-8 glass-card rounded-2xl p-6">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-bold text-lg text-gray-800">Spending Breakdown</h3>
+</div>
 <div class="flex-1 flex flex-col md:flex-row items-center justify-center gap-8">
-<!-- Placeholder for Doughnut Chart -->
-<div class="relative w-48 h-48 rounded-full border-[16px] border-surface-container-highest flex items-center justify-center">
-<!-- CSS pure pie representation -->
-<div class="absolute inset-0 rounded-full border-[16px] border-transparent" style="border-top-color: #ff9100; border-right-color: #ff4081; border-bottom-color: #2979ff; border-left-color: #00e676; transform: rotate(45deg);"></div>
-<div class="text-center z-10 bg-surface w-32 h-32 rounded-full flex flex-col items-center justify-center shadow-inner">
-<span class="font-label-sm text-label-sm text-on-surface-variant">Total</span>
-<span class="font-headline-md text-headline-md text-on-background doughnut-total">--</span>
+<div class="relative w-48 h-48">
+<canvas id="spendingDoughnut"></canvas>
+<div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+<div class="text-center">
+<span class="text-xs text-gray-500">Total</span>
+<span class="block font-bold text-xl text-gray-800 doughnut-total">--</span>
+</div>
 </div>
 </div>
 <div class="flex flex-col gap-4 w-full max-w-xs">
 <div class="flex items-center justify-between" data-category-legend="Food">
 <div class="flex items-center gap-2">
-<div class="w-3 h-3 rounded-full bg-vibrant-orange"></div>
-<span class="font-body-md text-body-md text-on-surface">Food & Dining</span>
+<div class="w-3 h-3 rounded-full bg-orange-500"></div>
+<span class="text-sm text-gray-800">Food & Dining</span>
 </div>
-<span class="font-label-lg text-label-lg category-pct">--</span>
+<span class="text-sm category-pct">--</span>
 </div>
 <div class="flex items-center justify-between" data-category-legend="Transport">
 <div class="flex items-center gap-2">
-<div class="w-3 h-3 rounded-full bg-vibrant-purple"></div>
-<span class="font-body-md text-body-md text-on-surface">Transport</span>
+<div class="w-3 h-3 rounded-full bg-purple-500"></div>
+<span class="text-sm text-gray-800">Transport</span>
 </div>
-<span class="font-label-lg text-label-lg category-pct">--</span>
+<span class="text-sm category-pct">--</span>
 </div>
 <div class="flex items-center justify-between" data-category-legend="Entertainment">
 <div class="flex items-center gap-2">
-<div class="w-3 h-3 rounded-full bg-vibrant-pink"></div>
-<span class="font-body-md text-body-md text-on-surface">Entertainment</span>
+<div class="w-3 h-3 rounded-full bg-pink-500"></div>
+<span class="text-sm text-gray-800">Entertainment</span>
 </div>
-<span class="font-label-lg text-label-lg category-pct">--</span>
+<span class="text-sm category-pct">--</span>
 </div>
 <div class="flex items-center justify-between" data-category-legend="Shopping">
 <div class="flex items-center gap-2">
-<div class="w-3 h-3 rounded-full bg-vibrant-blue"></div>
-<span class="font-body-md text-body-md text-on-surface">Shopping</span>
+<div class="w-3 h-3 rounded-full bg-blue-500"></div>
+<span class="text-sm text-gray-800">Shopping</span>
 </div>
-<span class="font-label-lg text-label-lg category-pct">--</span>
+<span class="text-sm category-pct">--</span>
 </div>
 <div class="flex items-center justify-between" data-category-legend="Other">
 <div class="flex items-center gap-2">
-<div class="w-3 h-3 rounded-full bg-vibrant-mint"></div>
-<span class="font-body-md text-body-md text-on-surface">Others</span>
+<div class="w-3 h-3 rounded-full bg-green-500"></div>
+<span class="text-sm text-gray-800">Others</span>
 </div>
-<span class="font-label-lg text-label-lg category-pct">--</span>
-</div>
-</div>
+<span class="text-sm category-pct">--</span>
 </div>
 </div>
-<!-- Savings Goals -->
-<div class="md:col-span-4 glass-card rounded-2xl p-card-padding flex flex-col">
+</div>
+</div>
+<div class="md:col-span-12 glass-card rounded-2xl p-6 mt-4">
 <div class="flex justify-between items-center mb-6">
-<h3 class="font-title-lg text-title-lg text-on-background">Savings Goals</h3>
-<span class="material-symbols-outlined text-primary cursor-pointer hover:scale-110 transition-transform">add_circle</span>
-</div>
-<div class="flex flex-col gap-6 flex-1 justify-center">
-<p class="font-body-md text-body-md text-on-surface-variant text-center">No savings goals yet</p>
-</div>
-</div>
-<!-- Recent Transactions -->
-<div class="md:col-span-12 glass-card rounded-2xl p-card-padding mt-4">
-<div class="flex justify-between items-center mb-6">
-<h3 class="font-title-lg text-title-lg text-on-background">Recent Transactions</h3>
-<button class="font-label-lg text-label-lg text-primary hover:text-primary-container transition-colors">View All</button>
+<h3 class="font-bold text-lg text-gray-800">Recent Transactions</h3>
 </div>
 <div class="flex flex-col" data-transactions-list>
-<p class="font-body-md text-body-md text-on-surface-variant text-center py-8">No transactions yet</p>
+<p class="text-sm text-gray-500 text-center py-8">No transactions yet</p>
 </div>
 </div>
 </div>
 </main>
 </div>
-<!-- Add Expense Modal -->
 <div data-add-expense-modal class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="bg-surface-container-lowest rounded-2xl p-6 w-full max-w-md shadow-2xl">
-        <div class="flex justify-between items-center mb-6">
-            <h3 class="font-headline-lg text-headline-lg text-on-background">Add Expense</h3>
-            <button data-close-modal class="p-2 rounded-full hover:bg-surface-container transition-colors">
-                <span class="material-symbols-outlined text-on-surface-variant">close</span>
-            </button>
-        </div>
-        <form data-expense-form class="flex flex-col gap-4">
-            <div>
-                <label class="font-label-lg text-label-lg text-on-surface-variant mb-1 block">Amount ($)</label>
-                <input type="number" name="amount" step="0.01" min="0.01" required
-                    class="w-full px-4 py-3 rounded-xl bg-surface-container border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary/20 text-body-md text-on-background outline-none transition-all" placeholder="0.00">
-            </div>
-            <div>
-                <label class="font-label-lg text-label-lg text-on-surface-variant mb-1 block">Category</label>
-                <select name="category" data-category-select required
-                    class="w-full px-4 py-3 rounded-xl bg-surface-container border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary/20 text-body-md text-on-background outline-none transition-all">
-                    <option value="">Select category</option>
-                    <option value="Food">Food & Dining</option>
-                    <option value="Transport">Transport</option>
-                    <option value="Shopping">Shopping</option>
-                    <option value="Entertainment">Entertainment</option>
-                    <option value="Other">Other</option>
-                </select>
-            </div>
-            <div>
-                <label class="font-label-lg text-label-lg text-on-surface-variant mb-1 block">Description</label>
-                <input type="text" name="description"
-                    class="w-full px-4 py-3 rounded-xl bg-surface-container border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary/20 text-body-md text-on-background outline-none transition-all" placeholder="What was this expense for?">
-            </div>
-            <div>
-                <label class="font-label-lg text-label-lg text-on-surface-variant mb-1 block">Date</label>
-                <input type="date" name="date" required
-                    class="w-full px-4 py-3 rounded-xl bg-surface-container border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary/20 text-body-md text-on-background outline-none transition-all">
-            </div>
-            <button type="submit" data-submit-expense
-                class="w-full bg-primary text-on-primary font-label-lg text-label-lg py-3 rounded-xl hover:scale-[1.02] shadow-lg shadow-primary/30 transition-all duration-200 active:scale-95 flex justify-center items-center gap-2 mt-2">
-                <span class="material-symbols-outlined text-sm">add</span>
-                Add Expense
-            </button>
-        </form>
-    </div>
+<div class="bg-white rounded-2xl p-6 w-full max-w-md shadow-2xl">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-bold text-xl text-gray-800">Add Expense</h3>
+<button data-close-modal class="p-2 rounded-full hover:bg-gray-100">
+<span class="material-symbols-outlined text-gray-500">close</span>
+</button>
+</div>
+<form data-expense-form class="flex flex-col gap-4">
+<div>
+<label class="text-sm text-gray-500 mb-1 block">Amount ($)</label>
+<input type="number" name="amount" step="0.01" min="0.01" required class="w-full px-4 py-3 rounded-xl bg-gray-100 border border-gray-200 text-sm outline-none" placeholder="0.00">
+</div>
+<div>
+<label class="text-sm text-gray-500 mb-1 block">Category</label>
+<select name="category" data-category-select required class="w-full px-4 py-3 rounded-xl bg-gray-100 border border-gray-200 text-sm outline-none">
+<option value="">Select category</option>
+<option value="Food">Food & Dining</option>
+<option value="Transport">Transport</option>
+<option value="Shopping">Shopping</option>
+<option value="Entertainment">Entertainment</option>
+<option value="Other">Other</option>
+</select>
+</div>
+<div>
+<label class="text-sm text-gray-500 mb-1 block">Description</label>
+<input type="text" name="description" class="w-full px-4 py-3 rounded-xl bg-gray-100 border border-gray-200 text-sm outline-none" placeholder="What was this expense for?">
+</div>
+<div>
+<label class="text-sm text-gray-500 mb-1 block">Date</label>
+<input type="date" name="date" required class="w-full px-4 py-3 rounded-xl bg-gray-100 border border-gray-200 text-sm outline-none">
+</div>
+<button type="submit" data-submit-expense class="w-full bg-blue-600 text-white text-sm py-3 rounded-xl hover:scale-[1.02] shadow-lg shadow-blue-600/30 transition-all flex justify-center items-center gap-2 mt-2">
+<span class="material-symbols-outlined text-sm">add</span>Add Expense
+</button>
+</form>
+</div>
 </div>
 </body></html>

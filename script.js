@@ -2,6 +2,85 @@
 const API_BASE = 'http://localhost:5000/api';
 const CORE_CATEGORIES = ['Food', 'Transport', 'Entertainment', 'Shopping', 'Other'];
 
+// ============ CHART.JS DOUGHNUT COLORS ============
+const DOUGHNUT_COLORS = {
+    'Food': '#ff9100',
+    'Transport': '#d500f9',
+    'Entertainment': '#ff4081',
+    'Shopping': '#2979ff',
+    'Other': '#00e676'
+};
+
+let spendingChart = null;
+
+// ============ CHART FUNCTIONS ============
+function initDoughnutChart() {
+    const ctx = document.getElementById('spendingDoughnut');
+    if (!ctx) return;
+    
+    spendingChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: [],
+            datasets: [{
+                data: [],
+                backgroundColor: [],
+                borderWidth: 0,
+                hoverOffset: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            cutout: '65%',
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const value = context.raw;
+                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const pct = total > 0 ? ((value / total) * 100).toFixed(0) : 0;
+                            return `$${value.toFixed(2)} (${pct}%)`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+function updateDoughnutChart(data) {
+    if (!spendingChart) initDoughnutChart();
+    if (!data || !data.by_category || data.by_category.length === 0) {
+        if (spendingChart) {
+            spendingChart.data.labels = [];
+            spendingChart.data.datasets[0].data = [];
+            spendingChart.data.datasets[0].backgroundColor = [];
+            spendingChart.update();
+        }
+        // Update center total
+        const centerTotal = document.querySelector('.doughnut-total');
+        if (centerTotal) centerTotal.textContent = '$0.00';
+        return;
+    }
+
+    // Calculate total for center display
+    const total = data.by_category.reduce((sum, c) => sum + c.total, 0);
+    
+    // Only include categories with actual expenses (total > 0)
+    const activeCategories = data.by_category.filter(c => c.total > 0);
+    
+    spendingChart.data.labels = activeCategories.map(c => c.category);
+    spendingChart.data.datasets[0].data = activeCategories.map(c => c.total);
+    spendingChart.data.datasets[0].backgroundColor = activeCategories.map(c => DOUGHNUT_COLORS[c.category] || '#888888');
+    spendingChart.update();
+    
+    // Update center total
+    const centerTotal = document.querySelector('.doughnut-total');
+    if (centerTotal) centerTotal.textContent = `$${total.toFixed(2)}`;
+}
+
 // ============ API HELPERS ============
 async function fetchAPI(endpoint, options = {}) {
     try {
@@ -26,7 +105,10 @@ async function loadDashboardData() {
         fetchAPI('/savings-goals')
     ]);
 
-    if (summary) updateSummaryCards(summary);
+    if (summary) {
+        updateSummaryCards(summary);
+        updateDoughnutChart(summary);
+    }
     if (expenses) updateTransactionsList(expenses.expenses);
     if (categories) updateCategoryData(categories.categories);
     if (savingsGoals) updateSavingsGoals(savingsGoals.savings_goals);
@@ -78,10 +160,9 @@ function updateSummaryCards(data) {
                 pctEl.textContent = `${categoryPercentages[catName]}%`;
             }
         });
-
-        // Update doughnut center total
-        const centerTotal = document.querySelector('.doughnut-total');
-        if (centerTotal) centerTotal.textContent = `$${total.toFixed(2)}`;
+        
+        // Update doughnut chart
+        updateDoughnutChart(data);
     }
 }
 
@@ -232,6 +313,7 @@ function updateSavingsGoals(goals) {
 
 // ============ INITIALIZATION ============
 document.addEventListener('DOMContentLoaded', () => {
+    initDoughnutChart();
     loadDashboardData();
 
     document.querySelectorAll('[data-add-expense-btn]').forEach(btn => {

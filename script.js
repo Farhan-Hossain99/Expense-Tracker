@@ -81,7 +81,7 @@ function updateSummaryCards(data) {
 
         // Update doughnut center total
         const centerTotal = document.querySelector('.doughnut-total');
-        if (centerTotal) centerTotal.textContent = `$${(total / 1000).toFixed(1)}k`;
+        if (centerTotal) centerTotal.textContent = `$${total.toFixed(2)}`;
     }
 }
 
@@ -130,7 +130,7 @@ function updateTransactionsList(expenses) {
 }
 
 function updateCategoryData(categories) {
-    // Update category dropdown in modal - only show core categories
+    // Update user_progress dropdown in modal - only show core categories
     const categorySelect = document.querySelector('[data-category-select]');
     if (categorySelect) {
         categorySelect.innerHTML = CORE_CATEGORIES.map(c =>
@@ -204,12 +204,12 @@ async function handleAddExpense(event) {
 function updateSavingsGoals(goals) {
     const container = document.querySelector('[data-savings-goals]');
     if (!container) return;
-    
+
     if (!goals || goals.length === 0) {
         container.innerHTML = '<p class="font-body-md text-body-md text-on-surface-variant text-center py-8">No savings goals yet</p>';
         return;
     }
-    
+
     container.innerHTML = goals.map(goal => {
         const progress = ((goal.current_amount / goal.target_amount) * 100).toFixed(1);
         return `

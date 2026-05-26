@@ -76,19 +76,6 @@ def init_db():
         )
     ''')
     
-    # Insert sample savings goals if table is empty
-    cursor.execute('SELECT COUNT(*) FROM savings_goals')
-    if cursor.fetchone()[0] == 0:
-        sample_goals = [
-            ('Emergency Fund', 5000, 1500, '2026-12-31'),
-            ('Vacation', 3000, 800, '2026-08-01'),
-            ('New Laptop', 2000, 1200, '2026-06-01')
-        ]
-        cursor.executemany(
-            'INSERT INTO savings_goals (name, target_amount, current_amount, deadline) VALUES (?, ?, ?, ?)',
-            sample_goals
-        )
-    
     conn.commit()
     conn.close()
 
@@ -186,10 +173,11 @@ def create_expense():
     except (ValueError, TypeError):
         return jsonify({'error': 'amount must be a valid number'}), 400
     
-    # Validate category
-    valid_categories = ['Food', 'Transport', 'Shopping', 'Bills', 'Entertainment', 'Health', 'Other']
-    if data['category'] not in valid_categories:
-        return jsonify({'error': f'category must be one of: {", ".join(valid_categories)}'}), 400
+    # Normalize category to core categories (non-core -> Other)
+    core_categories = ['Food', 'Transport', 'Entertainment', 'Shopping', 'Other']
+    category = data['category']
+    if category not in core_categories:
+        category = 'Other'
     
     conn = get_db()
     cursor = conn.cursor()
@@ -198,7 +186,7 @@ def create_expense():
         'INSERT INTO expenses (amount, category, description, date) VALUES (?, ?, ?, ?)',
         (
             amount,
-            data['category'],
+            category,
             data.get('description', ''),
             data['date']
         )
@@ -211,7 +199,7 @@ def create_expense():
     return jsonify({
         'id': expense_id,
         'amount': amount,
-        'category': data['category'],
+        'category': category,
         'description': data.get('description', ''),
         'date': data['date'],
         'message': 'Expense created successfully'
@@ -332,6 +320,16 @@ def get_summary():
         ORDER BY total DESC
     ''', (month,))
     by_category = [dict(row) for row in cursor.fetchall()]
+    
+    # Aggregate non-core categories into "Other"
+    core_categories = ['Food', 'Transport', 'Entertainment', 'Shopping', 'Other']
+    aggregated = {}
+    for cat in by_category:
+        name = cat['category']
+        if name not in core_categories:
+            name = 'Other'
+        aggregated[name] = aggregated.get(name, 0) + cat['total']
+    by_category = [{'category': k, 'total': v} for k, v in aggregated.items()]
     
     conn.close()
     

@@ -1,12 +1,15 @@
 /* Custom styles for FinPulse Dashboard */
 body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f9f9ff; color: #111c2d; }
+
 .glass-card {
-    background: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    background: rgba(255, 255, 255, 0.9);
     border: 1px solid rgba(255, 255, 255, 0.4);
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.04);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.08);
+    border-radius: 1rem;
+    overflow: hidden;
+    position: relative;
 }
+
 .vibrant-mint { color: #00e676; }
 .vibrant-pink { color: #ff4081; }
 .vibrant-orange { color: #ff9100; }
@@ -24,3 +27,15 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f9f9ff; 
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #c2c6d6; border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: #727785; }
+
+html { scroll-behavior: smooth; }
+.canvas-container { overflow: hidden; transform: translateZ(0); }
+.search-input { position: relative; z-index: 50; }
+
+/* Header profile - force clear all blur/transform effects */
+.header-profile {
+    filter: none !important;
+    transform: none !important;
+    mix-blend-mode: normal !important;
+    -webkit-filter: none !important;
+}

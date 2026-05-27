@@ -20,11 +20,11 @@ def get_summary():
         month = datetime.now().strftime('%Y-%m')
     conn = get_db()
     cursor = conn.cursor()
-    cursor.execute("SELECT COALESCE(SUM(amount), 0) as total_spent, COUNT(*) as expense_count FROM expenses WHERE TO_CHAR(date::date, 'YYYY-MM') = %s", (month,))
+    cursor.execute("SELECT COALESCE(SUM(amount), 0) as total_spent, COUNT(*) as expense_count FROM expenses WHERE user_id = 1 AND TO_CHAR(date::date, 'YYYY-MM') = %s", (month,))
     result = cursor.fetchone()
     total_spent = result['total_spent']
     expense_count = result['expense_count']
-    cursor.execute("SELECT category, SUM(amount) as total FROM expenses WHERE TO_CHAR(date::date, 'YYYY-MM') = %s GROUP BY category ORDER BY total DESC", (month,))
+    cursor.execute("SELECT category, SUM(amount) as total FROM expenses WHERE user_id = 1 AND TO_CHAR(date::date, 'YYYY-MM') = %s GROUP BY category ORDER BY total DESC", (month,))
     by_category = [dict(row) for row in cursor.fetchall()]
     core_categories = ['Food', 'Transport', 'Entertainment', 'Shopping', 'Other']
     aggregated = {}
@@ -49,7 +49,7 @@ def get_monthly_spending():
     cursor = conn.cursor()
     results = []
     for month in month_list:
-        cursor.execute("SELECT COALESCE(SUM(amount), 0) as total FROM expenses WHERE TO_CHAR(date::date, 'YYYY-MM') = %s", (month,))
+        cursor.execute("SELECT COALESCE(SUM(amount), 0) as total FROM expenses WHERE user_id = 1 AND TO_CHAR(date::date, 'YYYY-MM') = %s", (month,))
         result = cursor.fetchone()
         results.append({'month': month, 'total': round(result['total'], 2)})
     conn.close()

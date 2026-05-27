@@ -12,6 +12,7 @@ def get_db():
 
 expenses_bp = Blueprint('expenses', __name__)
 
+
 @expenses_bp.route('/api/expenses', methods=['GET'])
 def get_expenses():
     conn = get_db()
@@ -20,7 +21,7 @@ def get_expenses():
     category = request.args.get('category')
     limit = request.args.get('limit', type=int)
     offset = request.args.get('offset', 0, type=int)
-    query = 'SELECT * FROM expenses WHERE 1=1'
+    query = 'SELECT * FROM expenses WHERE user_id = 1'
     params = []
     if month:
         query += " AND TO_CHAR(date::date, 'YYYY-MM') = %s"
@@ -35,7 +36,7 @@ def get_expenses():
     cursor.execute(query, params)
     expenses = [dict(row) for row in cursor.fetchall()]
     count_params = []
-    count_query = 'SELECT COUNT(*) as count FROM expenses WHERE 1=1'
+    count_query = 'SELECT COUNT(*) as count FROM expenses WHERE user_id = 1'
     if month:
         count_query += " AND TO_CHAR(date::date, 'YYYY-MM') = %s"
         count_params.append(month)
@@ -51,7 +52,7 @@ def get_expenses():
 def get_expense(expense_id):
     conn = get_db()
     cursor = conn.cursor()
-    cursor.execute('SELECT * FROM expenses WHERE id = %s', (expense_id,))
+    cursor.execute('SELECT * FROM expenses WHERE id = %s AND user_id = 1', (expense_id,))
     expense = cursor.fetchone()
     conn.close()
     if expense is None:
@@ -75,7 +76,7 @@ def create_expense():
         category = 'Other'
     conn = get_db()
     cursor = conn.cursor()
-    cursor.execute('INSERT INTO expenses (amount, category, description, date) VALUES (%s, %s, %s, %s)', (amount, category, data.get('description', ''), data['date']))
+    cursor.execute('INSERT INTO expenses (user_id, amount, category, description, date) VALUES (1, %s, %s, %s, %s)', (amount, category, data.get('description', ''), data['date']))
     expense_id = cursor.lastrowid
     conn.commit()
     conn.close()
@@ -86,7 +87,7 @@ def update_expense(expense_id):
     data = request.get_json()
     conn = get_db()
     cursor = conn.cursor()
-    cursor.execute('SELECT * FROM expenses WHERE id = %s', (expense_id,))
+    cursor.execute('SELECT * FROM expenses WHERE id = %s AND user_id = 1', (expense_id,))
     existing = cursor.fetchone()
     if existing is None:
         conn.close()
@@ -117,7 +118,7 @@ def update_expense(expense_id):
         conn.close()
         return jsonify({'error': 'No fields to update'}), 400
     params.append(expense_id)
-    query = f"UPDATE expenses SET {', '.join(updates)} WHERE id = %s"
+    query = f"UPDATE expenses SET {', '.join(updates)} WHERE id = %s AND user_id = 1"
     cursor.execute(query, params)
     conn.commit()
     conn.close()
@@ -127,12 +128,12 @@ def update_expense(expense_id):
 def delete_expense(expense_id):
     conn = get_db()
     cursor = conn.cursor()
-    cursor.execute('SELECT * FROM expenses WHERE id = %s', (expense_id,))
+    cursor.execute('SELECT * FROM expenses WHERE id = %s AND user_id = 1', (expense_id,))
     existing = cursor.fetchone()
     if existing is None:
         conn.close()
         return jsonify({'error': 'Expense not found'}), 404
-    cursor.execute('DELETE FROM expenses WHERE id = %s', (expense_id,))
+    cursor.execute('DELETE FROM expenses WHERE id = %s AND user_id = 1', (expense_id,))
     conn.commit()
     conn.close()
     return jsonify({'message': 'Expense deleted successfully'})

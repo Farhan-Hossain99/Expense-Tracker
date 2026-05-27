@@ -16,7 +16,7 @@ income_bp = Blueprint('income', __name__)
 def get_income():
     conn = get_db()
     cursor = conn.cursor()
-    cursor.execute('SELECT income FROM income WHERE id = 1')
+    cursor.execute('SELECT income FROM income WHERE user_id = 1')
     row = cursor.fetchone()
     conn.close()
     if row is None or row['income'] is None:
@@ -29,7 +29,7 @@ def set_income():
     income = data.get('income', 0)
     conn = get_db()
     cursor = conn.cursor()
-    cursor.execute('INSERT INTO income (id, income) VALUES (1, %s) ON CONFLICT (id) DO UPDATE SET income = %s', (income, income))
+    cursor.execute('INSERT INTO income (user_id, income) VALUES (1, %s) ON CONFLICT (id) DO UPDATE SET income = %s', (income, income))
     conn.commit()
     conn.close()
     return jsonify({'income': income})
@@ -38,7 +38,7 @@ def set_income():
 def delete_income():
     conn = get_db()
     cursor = conn.cursor()
-    cursor.execute('DELETE FROM income WHERE id = 1')
+    cursor.execute('DELETE FROM income WHERE user_id = 1')
     conn.commit()
     conn.close()
     return jsonify({'success': True})

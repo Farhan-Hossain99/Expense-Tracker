@@ -16,7 +16,7 @@ goals_bp = Blueprint('goals', __name__)
 def get_savings_goals():
     conn = get_db()
     cursor = conn.cursor()
-    cursor.execute('SELECT * FROM savings_goals ORDER BY id')
+    cursor.execute('SELECT * FROM savings_goals WHERE user_id = 1 ORDER BY id')
     goals = [dict(row) for row in cursor.fetchall()]
     conn.close()
     return jsonify({'savings_goals': goals})
@@ -27,9 +27,9 @@ def update_savings_goal(goal_id):
     if 'current_amount' in data:
         conn = get_db()
         cursor = conn.cursor()
-        cursor.execute('UPDATE savings_goals SET current_amount = %s WHERE id = %s', (data['current_amount'], goal_id))
+        cursor.execute('UPDATE savings_goals SET current_amount = %s WHERE id = %s AND user_id = 1', (data['current_amount'], goal_id))
         conn.commit()
-        cursor.execute('SELECT * FROM savings_goals WHERE id = %s', (goal_id,))
+        cursor.execute('SELECT * FROM savings_goals WHERE id = %s AND user_id = 1', (goal_id,))
         goal = dict(cursor.fetchone())
         conn.close()
         return jsonify({'savings_goal': goal})

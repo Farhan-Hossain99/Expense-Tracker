@@ -4,7 +4,6 @@ const CORE_CATEGORIES = ['Food', 'Transport', 'Entertainment', 'Shopping', 'Othe
 const INCOME_STORAGE_KEY = 'finpulse_monthly_income';
 const FIRST_LOGIN_KEY = 'finpulse_first_login_complete';
 
-// ============ CHART.JS DOUGHNUT COLORS ============
 const DOUGHNUT_COLORS = {
     'Food': '#ff9100',
     'Transport': '#d500f9',
@@ -15,7 +14,6 @@ const DOUGHNUT_COLORS = {
 
 let spendingChart = null;
 
-// ============ CHART FUNCTIONS ============
 function initDoughnutChart() {
     const ctx = document.getElementById('spendingDoughnut');
     if (!ctx) return;
@@ -44,16 +42,18 @@ function updateDoughnutChart(data) {
     if (centerTotal) centerTotal.textContent = `$${total.toFixed(2)}`;
 }
 
-// ============ API HELPERS ============
 async function fetchAPI(endpoint, options = {}) {
     try { const response = await fetch(`${API_BASE}${endpoint}`, { headers: { 'Content-Type': 'application/json' }, ...options }); if (!response.ok) throw new Error(`HTTP ${response.status}`); return await response.json(); }
     catch (error) { console.error(`API Error (${endpoint}):`, error); return null; }
 }
 
-// ============ DATA FETCHING ============
-async function loadDashboardData() {
-    const [summary, expenses, categories, savingsGoals] = await Promise.all([fetchAPI('/analytics/summary'), fetchAPI('/expenses?limit=10'), fetchAPI('/categories'), fetchAPI('/savings-goals')]);
-    if (summary) { updateSummaryCards(summary); updateDoughnutChart(summary); }
+async function loadDashboardData(serverIncome) {
+    const [summary, expenses, categories, savingsGoals] = await Promise.all([
+        fetchAPI('/analytics/summary'), fetchAPI('/expenses?limit=10'),
+        fetchAPI('/categories'), fetchAPI('/savings-goals')]);
+    if (serverIncome !== undefined && serverIncome > 0) { saveIncome(serverIncome); }
+    const income = serverIncome || getIncome();
+    if (summary) { updateSummaryCards(summary, income); updateDoughnutChart(summary); }
     if (expenses) updateTransactionsList(expenses.expenses);
     if (categories) updateCategoryData(categories.categories);
     if (savingsGoals) updateSavingsGoals(savingsGoals.savings_goals);
@@ -62,17 +62,16 @@ async function loadDashboardData() {
 async function loadExpenses(limit = 20) { return await fetchAPI(`/expenses?limit=${limit}`); }
 async function loadMonthlySummary(month) { return await fetchAPI(`/analytics/summary?month=${month}`); }
 
-// ============ UPDATE UI FUNCTIONS ============
-function updateSummaryCards(data) {
+function updateSummaryCards(data, income) {
+    income = income || 0;
     const totalSpentEl = document.querySelector('[data-total-spent]');
     const monthlyExpensesEl = document.querySelector('[data-monthly-expenses]');
     const monthlyIncomeEl = document.querySelector('[data-monthly-income]');
-    const monthlyIncome = getIncome();
     const totalSpent = data.total_spent || 0;
-    const netBalance = monthlyIncome - totalSpent;
+    const netBalance = income - totalSpent;
     if (totalSpentEl) { totalSpentEl.textContent = `$${netBalance.toFixed(2)}`; totalSpentEl.className = `font-extrabold text-4xl ${netBalance >= 0 ? 'text-gray-800' : 'text-red-600'}`; }
     if (monthlyExpensesEl) monthlyExpensesEl.textContent = `$${totalSpent.toFixed(2)}`;
-    if (monthlyIncomeEl) monthlyIncomeEl.textContent = `$${monthlyIncome.toFixed(2)}`;
+    if (monthlyIncomeEl) monthlyIncomeEl.textContent = `$${income.toFixed(2)}`;
     if (data.by_category && data.by_category.length > 0) {
         const aggregatedCategories = {};
         data.by_category.forEach(cat => { const normalizedCategory = CORE_CATEGORIES.includes(cat.category) ? cat.category : 'Other'; aggregatedCategories[normalizedCategory] = (aggregatedCategories[normalizedCategory] || 0) + cat.total; });
@@ -94,7 +93,7 @@ function updateTransactionsList(expenses) {
         const searchText = `${(exp.description || exp.category).toLowerCase()} ${exp.category.toLowerCase()}`;
         return `<div class="transaction-item flex items-center justify-between py-4 border-b border-gray-100 last:border-0 hover:bg-gray-50 px-2 rounded-lg transition-colors cursor-pointer" data-search-text="${searchText}" data-category="${exp.category}" data-date="${exp.date}">
             <div class="flex items-center gap-4"><div class="w-12 h-12 rounded-full bg-${color}/10 text-${color} flex items-center justify-center"><span class="material-symbols-outlined">${icon}</span></div>
-            <div><p class="font-bold text-lg text-gray-800">${exp.description || exp.category}</p><p class="text-sm text-gray-500">${date} • ${exp.category}</p></div></div>
+            <div><p class="font-bold text-lg text-gray-800">${exp.description || exp.category}</p><p class="text-sm text-gray-500">${date} - ${exp.category}</p></div></div>
             <span class="font-bold text-lg text-gray-800">-$${exp.amount.toFixed(2)}</span>
         </div>`;
     }).join('');
@@ -109,7 +108,7 @@ function renderSearchResults(results) {
     count.textContent = results.length + ' found';
     const iconMap = { 'Food': 'restaurant', 'Transport': 'directions_car', 'Shopping': 'shopping_bag', 'Entertainment': 'movie', 'Other': 'more_horiz' };
     const colorMap = { 'Food': 'bg-orange-100 text-orange-600', 'Transport': 'bg-blue-100 text-blue-600', 'Shopping': 'bg-green-100 text-green-600', 'Entertainment': 'bg-pink-100 text-pink-600', 'Other': 'bg-gray-100 text-gray-600' };
-    const html = results.map(exp => { const icon = iconMap[exp.category] || 'more_horiz'; const color = colorMap[exp.category] || 'bg-gray-100 text-gray-600'; const date = new Date(exp.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); return '<div class="flex items-center justify-between py-3 border-b border-gray-100 hover:bg-gray-50 px-3 rounded-lg transition-colors cursor-pointer"><div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full ' + color + ' flex items-center justify-center"><span class="material-symbols-outlined text-sm">' + icon + '</span></div><div><p class="font-semibold text-gray-800">' + (exp.description || exp.category) + '</p><p class="text-xs text-gray-500">' + date + ' • ' + exp.category + '</p></div></div><span class="font-bold text-gray-800">-$' + exp.amount.toFixed(2) + '</span></div>'; }).join('');
+    const html = results.map(exp => { const icon = iconMap[exp.category] || 'more_horiz'; const color = colorMap[exp.category] || 'bg-gray-100 text-gray-600'; const date = new Date(exp.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); return '<div class="flex items-center justify-between py-3 border-b border-gray-100 hover:bg-gray-50 px-3 rounded-lg transition-colors cursor-pointer"><div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full ' + color + ' flex items-center justify-center"><span class="material-symbols-outlined text-sm">' + icon + '</span></div><div><p class="font-semibold text-gray-800">' + (exp.description || exp.category) + '</p><p class="text-xs text-gray-500">' + date + ' - ' + exp.category + '</p></div></div><span class="font-bold text-gray-800">-$' + exp.amount.toFixed(2) + '</span></div>'; }).join('');
     list.innerHTML = html;
     container.classList.remove('hidden');
 }
@@ -131,8 +130,6 @@ function filterTransactions(searchTerm) {
 
 function updateCategoryData(categories) { const categorySelect = document.querySelector('[data-category-select]'); if (categorySelect) { categorySelect.innerHTML = CORE_CATEGORIES.map(c => `<option value="${c}">${c}</option>`).join(''); } }
 
-
-// ============ ADD EXPENSE MODAL ============
 function openAddExpenseModal() { const modal = document.querySelector('[data-add-expense-modal]'); if (modal) modal.classList.remove('hidden'); }
 function closeAddExpenseModal() { const modal = document.querySelector('[data-add-expense-modal]'); if (modal) modal.classList.add('hidden'); resetExpenseForm(); }
 function resetExpenseForm() { const form = document.querySelector('[data-expense-form]'); if (form) form.reset(); }
@@ -154,21 +151,31 @@ async function handleAddExpense(event) {
     finally { submitBtn.disabled = false; submitBtn.textContent = 'Add Expense'; }
 }
 
-// ============ INCOME MANAGEMENT ============
+async function getIncomeAPI() { const data = await fetchAPI('/income'); return data ? data.income : 0; }
+async function saveIncomeAPI(amount) { const response = await fetch(`${API_BASE}/income`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ income: amount }) }); return response.ok; }
+async function deleteIncomeAPI() { const response = await fetch(`${API_BASE}/income`, { method: 'DELETE' }); return response.ok; }
 function getIncome() { return parseFloat(localStorage.getItem(INCOME_STORAGE_KEY)) || 0; }
 function saveIncome(amount) { localStorage.setItem(INCOME_STORAGE_KEY, amount.toString()); }
 function openIncomeModal() { const modal = document.querySelector('[data-income-modal]'); if (modal) modal.classList.remove('hidden'); }
 function closeIncomeModal() { const modal = document.querySelector('[data-income-modal]'); if (modal) modal.classList.add('hidden'); }
-function handleIncomeSubmit(event) {
+async function handleIncomeSubmit(event) {
     event.preventDefault();
     const form = event.target;
     const incomeInput = form.querySelector('[name="income"]');
     const amount = parseFloat(incomeInput.value);
     if (!amount || amount <= 0) { alert('Please enter a valid income amount'); return; }
+    await saveIncomeAPI(amount);
     saveIncome(amount);
     localStorage.setItem(FIRST_LOGIN_KEY, 'true');
     closeIncomeModal();
     loadDashboardData();
+}
+async function handleDeleteIncome() {
+    if (!confirm('Are you sure you want to reset your income?')) return;
+    await deleteIncomeAPI();
+    localStorage.removeItem(INCOME_STORAGE_KEY);
+    localStorage.removeItem(FIRST_LOGIN_KEY);
+    openIncomeModal();
 }
 
 function updateSavingsGoals(goals) {
@@ -179,13 +186,23 @@ function updateSavingsGoals(goals) {
 }
 
 let initialized = false;
-// ============ INITIALIZATION ============
-document.addEventListener('DOMContentLoaded', () => {
+
+document.addEventListener('DOMContentLoaded', async () => {
     if (initialized) return;
     initialized = true;
     document.body.classList.add('loading');
+
+    const serverIncome = await getIncomeAPI();
+    if (serverIncome > 0) {
+        saveIncome(serverIncome);
+        localStorage.setItem(FIRST_LOGIN_KEY, 'true');
+    } else {
+        setTimeout(openIncomeModal, 800);
+    }
+
     initDoughnutChart();
-    loadDashboardData();
+    loadDashboardData(serverIncome);
+
     document.querySelectorAll('[data-add-expense-btn]').forEach(btn => { btn.addEventListener('click', openAddExpenseModal); });
     document.querySelectorAll('[data-close-modal]').forEach(btn => { btn.addEventListener('click', closeAddExpenseModal); });
     const expenseForm = document.querySelector('[data-expense-form]');
@@ -198,11 +215,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (incomeModal) { incomeModal.addEventListener('click', (e) => { if (e.target === incomeModal) closeIncomeModal(); }); }
     const incomeForm = document.querySelector('[data-income-form]');
     if (incomeForm) { incomeForm.addEventListener('submit', handleIncomeSubmit); }
-    const hasCompletedOnboarding = localStorage.getItem(FIRST_LOGIN_KEY) === 'true';
-    if (!hasCompletedOnboarding) { setTimeout(openIncomeModal, 500); }
-    else if (getIncome() === 0) { setTimeout(openIncomeModal, 500); }
+
     if ('fonts' in document) { document.fonts.ready.then(() => { setTimeout(() => { document.body.classList.remove('loading'); }, 100); }); }
     else { window.addEventListener('load', () => { setTimeout(() => { document.body.classList.remove('loading'); }, 200); }); }
     setTimeout(() => { document.body.classList.remove('loading'); }, 2000);
 });
+
 window.FinPulse = { loadDashboardData, loadExpenses, loadMonthlySummary };

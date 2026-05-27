@@ -1,45 +1,23 @@
 /* Custom styles for FinPulse Dashboard */
 body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f9f9ff; color: #111c2d; }
-
-.glass-card {
-    background: rgba(255, 255, 255, 0.9);
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.08);
-    border-radius: 1rem;
-    overflow: hidden;
-    position: relative;
-}
-
+.glass-card { background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(255, 255, 255, 0.4); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.08); border-radius: 1rem; overflow: hidden; position: relative; }
 .vibrant-mint { color: #00e676; }
 .vibrant-pink { color: #ff4081; }
 .vibrant-orange { color: #ff9100; }
 .vibrant-purple { color: #d500f9; }
 .vibrant-blue { color: #2979ff; }
-
 .bg-vibrant-mint { background-color: #00e676; }
 .bg-vibrant-pink { background-color: #ff4081; }
 .bg-vibrant-orange { background-color: #ff9100; }
 .bg-vibrant-purple { background-color: #d500f9; }
 .bg-vibrant-blue { background-color: #2979ff; }
-
-/* Custom scrollbar */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #c2c6d6; border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: #727785; }
-
 html { scroll-behavior: smooth; }
 .canvas-container { overflow: hidden; transform: translateZ(0); }
 .search-input { position: relative; z-index: 50; }
-
-/* Header profile - force clear all blur/transform effects */
-.header-profile {
-    filter: none !important;
-    transform: none !important;
-    mix-blend-mode: normal !important;
-    -webkit-filter: none !important;
-}
-
-/* Material Symbols FOUC prevention */
+.header-profile { filter: none !important; transform: none !important; mix-blend-mode: normal !important; -webkit-filter: none !important; }
 .material-symbols-outlined { opacity: 0; transition: opacity 0.15s ease-in; }
 .material-symbols-outlined.font-ready { opacity: 1; }

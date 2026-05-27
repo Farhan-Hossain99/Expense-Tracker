@@ -39,3 +39,7 @@ html { scroll-behavior: smooth; }
     mix-blend-mode: normal !important;
     -webkit-filter: none !important;
 }
+
+/* Material Symbols FOUC prevention */
+.material-symbols-outlined { opacity: 0; transition: opacity 0.15s ease-in; }
+.material-symbols-outlined.font-ready { opacity: 1; }

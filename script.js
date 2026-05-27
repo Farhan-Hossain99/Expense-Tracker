@@ -2,6 +2,7 @@
 const API_BASE = 'http://localhost:5000/api';
 const CORE_CATEGORIES = ['Food', 'Transport', 'Entertainment', 'Shopping', 'Other'];
 
+
 // ============ CHART.JS DOUGHNUT COLORS ============
 const DOUGHNUT_COLORS = {
     'Food': '#ff9100',
@@ -123,6 +124,7 @@ function updateSummaryCards(data) {
     const monthlyExpensesEl = document.querySelector('[data-monthly-expenses]');
     const monthlyIncomeEl = document.querySelector('[data-monthly-income]');
 
+
     if (totalSpentEl) totalSpentEl.textContent = `$${data.total_spent.toFixed(2)}`;
     if (monthlyExpensesEl) monthlyExpensesEl.textContent = `$${data.total_spent.toFixed(2)}`;
     if (monthlyIncomeEl) monthlyIncomeEl.textContent = `$${(data.total_spent * 1.5).toFixed(2)}`;
@@ -153,6 +155,7 @@ function updateSummaryCards(data) {
             }
         });
 
+
         updateDoughnutChart(data);
     }
 }
@@ -180,13 +183,14 @@ function updateTransactionsList(expenses) {
         'Other': 'gray-500'
     };
 
+
     container.innerHTML = expenses.map(exp => {
         const icon = categoryIcons[exp.category] || 'more_horiz';
         const color = categoryColors[exp.category] || 'gray-500';
         const date = new Date(exp.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
         const searchText = `${(exp.description || exp.category).toLowerCase()} ${exp.category.toLowerCase()}`;
         return `
-            <div class="transaction-item flex items-center justify-between py-4 border-b border-gray-100 last:border-0 hover:bg-gray-50 px-2 rounded-lg transition-colors cursor-pointer" data-search-text="${searchText}" data-category="${exp.category}" data-date="${exp.date}">
+            <div class="transaction-item flex items-center justify-between py-4 border-b border-gray-100 last:border-0 hover:bg-gray-50 px-2 roundedLG transition-colors cursor-pointer" data-search-text="${searchText}" data-category="${exp.category}" data-date="${exp.date}">
                 <div class="flex items-center gap-4">
                     <div class="w-12 h-12 rounded-full bg-${color}/10 text-${color} flex items-center justify-center">
                         <span class="material-symbols-outlined">${icon}</span>
@@ -302,6 +306,7 @@ async function handleAddExpense(event) {
     const form = event.target;
     const submitBtn = form.querySelector('[data-submit-expense]');
 
+
     const amount = parseFloat(form.querySelector('[name="amount"]').value);
     let category = form.querySelector('[name="category"]').value;
     const description = form.querySelector('[name="description"]').value;
@@ -370,8 +375,17 @@ function updateSavingsGoals(goals) {
     }).join('');
 }
 
+let initialized = false;
+
 // ============ INITIALIZATION ============
 document.addEventListener('DOMContentLoaded', () => {
+    // Guard against multiple executions
+    if (initialized) return;
+    initialized = true;
+
+    // Mark page as loading (content hidden until ready)
+    document.body.classList.add('loading');
+
     initDoughnutChart();
     loadDashboardData();
 
@@ -401,6 +415,22 @@ document.addEventListener('DOMContentLoaded', () => {
             filterTransactions(e.target.value);
         });
     }
+
+    // Remove loading state once fonts and initial render are complete
+    if ('fonts' in document) {
+        document.fonts.ready.then(() => {
+            setTimeout(() => {
+                document.body.classList.remove('loading');
+            }, 100);
+        });
+    } else {
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.body.classList.remove('loading');
+            }, 200);
+        });
+    }
+    setTimeout(() => { document.body.classList.remove('loading'); }, 2000);
 });
 
 // Export for external use
